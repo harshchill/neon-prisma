@@ -9,4 +9,8 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/User.ts'
+export type * from './models/Meal.ts'
+export type * from './models/Attendance.ts'
+export type * from './models/Feedback.ts'
+export type * from './models/IngredientRequirement.ts'
 export type * from './commonInputTypes.ts'

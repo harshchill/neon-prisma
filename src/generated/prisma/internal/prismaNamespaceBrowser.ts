@@ -51,7 +51,11 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  User: 'User'
+  User: 'User',
+  Meal: 'Meal',
+  Attendance: 'Attendance',
+  Feedback: 'Feedback',
+  IngredientRequirement: 'IngredientRequirement'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -80,6 +84,49 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const MealScalarFieldEnum = {
+  id: 'id',
+  imgURL: 'imgURL',
+  title: 'title',
+  type: 'type',
+  date: 'date',
+  isReady: 'isReady'
+} as const
+
+export type MealScalarFieldEnum = (typeof MealScalarFieldEnum)[keyof typeof MealScalarFieldEnum]
+
+
+export const AttendanceScalarFieldEnum = {
+  id: 'id',
+  hasEaten: 'hasEaten',
+  userId: 'userId',
+  mealId: 'mealId'
+} as const
+
+export type AttendanceScalarFieldEnum = (typeof AttendanceScalarFieldEnum)[keyof typeof AttendanceScalarFieldEnum]
+
+
+export const FeedbackScalarFieldEnum = {
+  id: 'id',
+  rating: 'rating',
+  comment: 'comment',
+  userId: 'userId',
+  mealId: 'mealId'
+} as const
+
+export type FeedbackScalarFieldEnum = (typeof FeedbackScalarFieldEnum)[keyof typeof FeedbackScalarFieldEnum]
+
+
+export const IngredientRequirementScalarFieldEnum = {
+  id: 'id',
+  itemName: 'itemName',
+  gramsPerPax: 'gramsPerPax',
+  mealId: 'mealId'
+} as const
+
+export type IngredientRequirementScalarFieldEnum = (typeof IngredientRequirementScalarFieldEnum)[keyof typeof IngredientRequirementScalarFieldEnum]
 
 
 export const SortOrder = {

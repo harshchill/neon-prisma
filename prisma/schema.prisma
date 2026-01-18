@@ -13,11 +13,81 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+}
+
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  password  String
-  role      String   @default("USER")
-  createdAt DateTime @default(now())
+  id         String       @id @default(cuid())
+  email      String       @unique
+  name       String?
+  password   String
+  role       Role         @default(USER)
+  createdAt  DateTime     @default(now())
+  attendance Attendance[]
+  feedback   Feedback[]
+}
+
+model Meal {
+  id      String   @id @default(cuid())
+  imgURL  String   @default("https://eduauraapublic.s3.ap-south-1.amazonaws.com/webassets/images/blogs/indian-food-nutrition.jpg")
+  title   String // e.g., "Aloo Paratha & Curd"
+  type    MealType // BREAKFAST, LUNCH, or DINNER
+  date    DateTime // The specific date of the meal
+  isReady Boolean  @default(false) // Trigger for notification
+
+  // Relations: A Meal has many students attending and reviews
+  attendance Attendance[]
+  feedback   Feedback[]
+
+  // Logic: Calculate total ingredients needed based on votes
+  ingredients IngredientRequirement[]
+
+  // Constraint: You cannot have two "LUNCH" entries for the same date.
+  @@unique([type, date])
+}
+
+model Attendance {
+  id       String  @id @default(cuid())
+  hasEaten Boolean @default(false) // Check-in status (scanned QR code)
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  meal   Meal   @relation(fields: [mealId], references: [id])
+  mealId String
+
+  // Constraint: A User cannot vote twice for the same Meal.
+  @@unique([userId, mealId])
+}
+
+model Feedback {
+  id      String  @id @default(cuid())
+  rating  Int // 1 to 5
+  comment String? // Optional text
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  meal   Meal   @relation(fields: [mealId], references: [id])
+  mealId String
+}
+
+// Bonus: ERP Logic for Odoo-style Inventory Calculation
+model IngredientRequirement {
+  id          String @id @default(cuid())
+  itemName    String // e.g. "Rice"
+  gramsPerPax Int // e.g. 150 (grams needed per person)
+
+  meal   Meal   @relation(fields: [mealId], references: [id])
+  mealId String
 }

@@ -2,15 +2,19 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import prisma from '../../../../lib/prisma' // Adjust path if your lib is not in @/lib
+import prisma from "../../../../lib/prisma"; // Adjust path if your lib is not in @/lib
 
 export const authOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email", placeholder: "hungry@example.com" },
-        password: { label: "Password", type: "password" }
+        email: {
+          label: "Email",
+          type: "email",
+          placeholder: "hungry@example.com",
+        },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         // 1. Check if email and password exist
@@ -33,7 +37,7 @@ export const authOptions = {
         // 4. Check if password matches
         const passwordMatch = await bcrypt.compare(
           credentials.password,
-          user.password
+          user.password,
         );
 
         if (!passwordMatch) {
@@ -57,7 +61,14 @@ export const authOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = user.role
+      }
+      const dbUser = await prisma.user.findUnique({
+        where: { id: token.id },
+        select: { role: true }, // Only fetch what you need for performance
+      });
+
+      if (dbUser) {
+        token.role = dbUser.role;
       }
       return token;
     },
