@@ -1,791 +1,131 @@
-# 🚀 Next.js + Prisma v7 + Neon (JavaScript-Only Setup)
+﻿<div align="center">
+  
+  # 🍽️ MealMate Management System
+  
+  **A Modern, Sleek, and Real-Time Mess & Meal Booking Dashboard**
+  
+  <br />
 
-A complete, production-ready guide to setting up **Prisma ORM v7** with **Next.js App Router** and **Neon Serverless PostgreSQL** using **pure JavaScript** (no TypeScript required).
+  [![Next.js](https://img.shields.io/badge/Next.js_16-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+  [![React](https://img.shields.io/badge/React_19-blue?style=for-the-badge&logo=react)](https://react.dev/)
+  [![Prisma](https://img.shields.io/badge/Prisma_7.2-2D3748?style=for-the-badge&logo=prisma)](https://prisma.io/)
+  [![Neon Serverless](https://img.shields.io/badge/Neon_DB-00e599?style=for-the-badge&logo=postgresql&logoColor=black)](https://neon.tech/)
+  [![Tailwind CSS](https://img.shields.io/badge/Tailwind_4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+  [![NextAuth](https://img.shields.io/badge/NextAuth-purple?style=for-the-badge&logo=next.js)](https://next-auth.js.org/)
 
-> **Note:** This is a custom, non-standard setup optimized for JavaScript developers. All configuration and code samples are tested and working.
+  <br />
+</div>
 
----
+## ✨ Overview
 
-## 📋 Table of Contents
+Welcome to the **MealMate Management System**, a comprehensive full-stack application engineered to streamline meal planning, booking, attendance, and feedback tracking. Whether it is for a hostel mess, corporate cafeteria, or event catering, this platform guarantees a premium, hassle-free administrative and user experience. 
 
-1. [Architecture Overview](#architecture-overview)
-2. [Prerequisites](#prerequisites)
-3. [Step-by-Step Setup](#step-by-step-setup)
-4. [Project Structure](#project-structure)
-5. [Key Files Explained](#key-files-explained)
-6. [Database Operations](#database-operations)
-7. [Testing the API](#testing-the-api)
-8. [Deployment](#deployment)
-9. [Troubleshooting](#troubleshooting)
-10. [Common Patterns](#common-patterns)
-
----
-
-## 🧱 Architecture Overview
-
-```
-┌─────────────────────────────────────────────────────────┐
-│                    Next.js App Router                    │
-├─────────────────────────────────────────────────────────┤
-│              app/api/users/route.js (API)               │
-├─────────────────────────────────────────────────────────┤
-│            lib/prisma.js (Singleton Client)            │
-├─────────────────────────────────────────────────────────┤
-│   Prisma Client (src/generated/prisma/client.ts)        │
-├─────────────────────────────────────────────────────────┤
-│         Neon Adapter (@prisma/adapter-neon)            │
-├─────────────────────────────────────────────────────────┤
-│      Neon Serverless PostgreSQL (Cloud Database)        │
-└─────────────────────────────────────────────────────────┘
-```
-
-**Why Neon Adapter?**
-- Designed for serverless environments (Vercel, Lambda, etc.)
-- Connection pooling prevents "too many connections" errors
-- WebSocket support for real-time connections
+Designed with a sleek, minimalist UI, the project leverages state-of-the-art serverless database architecture (Neon DB) and robust ORM features via Prisma.
 
 ---
 
-## 📦 Tech Stack
+## 🚀 Key Features
 
-| Component | Purpose |
-|-----------|---------|
-| **Next.js 16** | Full-stack React framework with App Router |
-| **Prisma v7** | Type-safe ORM for database operations |
-| **Neon** | Serverless PostgreSQL database |
-| **@prisma/adapter-neon** | Bridge between Prisma and Neon |
-| **@neondatabase/serverless** | Neon client library |
-| **ws** | WebSocket support for Node.js |
-| **JavaScript (ESM)** | Pure JS, no TypeScript compilation needed |
+### 🏢 **For Administrators**
+- **Intuitive Dashboard:** Get a bird's-eye view of total meal bookings and attendance trends powered by robust visual charts (`recharts`).
+- **Meal Scheduling:** Easily create and manage Breakfast, Lunch, and Dinner schedules seamlessly.
+- **Inventory/ERP Logic:** Calculate total ingredient requirements per user (e.g., grams per pax) to drastically reduce food waste.
+- **Attendance Tracking:** Monitor check-ins (`hasEaten`) to see who claimed their meal in real-time.
 
----
-
-## ✅ Prerequisites
-
-Before starting, ensure you have:
-
-- **Node.js v18+** ([download](https://nodejs.org))
-- **npm** or **yarn** package manager
-- **Neon account** ([sign up free](https://neon.tech))
-- **Git** (recommended)
+### 👤 **For Users (Students / Employees)**
+- **Effortless Meal Booking:** View upcoming meals and book slots easily through a gorgeous interactive dashboard.
+- **Secure Authentication:** Secure sign-up, login, and session persistence handled out-of-the-box by NextAuth and `bcryptjs`.
+- **Food Feedback:** Rate meals (1-5 stars) and optionally provide feedback for continuous culinary improvement.
 
 ---
 
-## 🛠 Step-by-Step Setup
+## 🛠️ Tech Stack & Architecture
 
-### Step 1: Create a New Next.js Project
+- **Framework:** Next.js 16 (App Router)
+- **Frontend:** React 19, Tailwind CSS 4, Lucide React (Icons), Recharts (Data Visualization)
+- **Backend/API:** Next.js Server Components and Route Handlers
+- **Database:** PostgreSQL on [Neon Serverless DB](https://neon.tech/)
+- **ORM:** Prisma 7.2 (w/ `@prisma/adapter-neon` for Edge / Worker environments)
+- **Authentication:** NextAuth.js (v4) with JWT-based session strategies
+
+---
+
+## 🗄️ Database Schema Snapshot
+
+The application relies on a closely coupled relational schema designed for high operational throughput:
+- `User` - Handles credential storage and role-based policies (ADMIN vs USE).
+- `Meal` - Core entity cataloging standard meal runs (Breakfast/Lunch/Dinner) with scheduled dates.
+- `Attendance` - Junction mapping between `User` and `Meal` serving as an event ticket validator.
+- `Feedback` - Collects post-meal ratings and user commentary.
+- `IngredientRequirement` - Stores underlying recipe metric mappings for ERP-level forecasting.
+
+---
+
+## 💻 Getting Started
+
+Follow these instructions to get the project up and running locally.
+
+### 1. Clone the repository
 
 ```bash
-npx create-next-app@latest neon-prisma --javascript --no-typescript --app
+git clone https://github.com/your-username/neon-prisma.git
 cd neon-prisma
 ```
 
-**Options to select:**
-- ✅ Use ESLint? (Yes)
-- ✅ Use Tailwind CSS? (Yes/No, optional)
-- ✅ TypeScript? (No - we're using JavaScript)
+### 2. Install Dependencies
 
-### Step 2: Install Prisma & Neon Dependencies
+Ensure you have Node.js 18+ installed on your machine.
 
 ```bash
-# Core packages
-npm install @prisma/client @prisma/adapter-neon @neondatabase/serverless
-
-# Dev dependencies for CLI
-npm install --save-dev prisma
-
-# Node.js WebSocket support (required for serverless)
-npm install ws
-
-# Optional: Buffer utilities (if you get warnings)
-npm install -D bufferutil
+npm install
+# or
+yarn install
 ```
 
-### Step 3: Initialize Prisma
+### 3. Setup Environment Variables
 
-```bash
-npx prisma init
+Create a `.env` file at the root of the project and add your database configuration and NextAuth secrets:
+
+```env
+# Neon Database Connection String
+DATABASE_URL="postgresql://<user>:<password>@<neon-host-url>/<dbname>?sslmode=require"
+
+# NextAuth Config
+NEXTAUTH_SECRET="your_ultra_secure_super_secret"
+NEXTAUTH_URL="http://localhost:3000"
 ```
 
-This creates:
-- `prisma/schema.prisma` - Your database schema
-- `.env.local` - Environment variables file
+### 4. Prisma Setup
 
-### Step 4: Configure Neon Connection
-
-**Get your Neon connection string:**
-
-1. Go to [console.prisma.io](https://console.prisma.io)
-2. Create a new Prisma Postgres project (or connect existing Neon DB)
-3. Copy the **pooled connection string**
-
-**Update `.env.local`:**
-
-```bash
-# Pooled connection (for runtime queries in production/serverless)
-DATABASE_URL="postgresql://USER:PASSWORD@ep-xxx-pooler.neon.tech/db?sslmode=require&channel_binding=require"
-
-# Optional: Direct connection (for migrations only - safer)
-DIRECT_URL="postgresql://USER:PASSWORD@ep-xxx.neon.tech/db?sslmode=require&channel_binding=require"
-```
-
-> **Pooled vs Direct:**
-> - **Pooled** (pooler.neon.tech) - Use for app queries, handles many concurrent connections
-> - **Direct** - Use only for migrations, creates fewer connections
-
-### Step 5: Configure Prisma Config File
-
-Create or update `prisma.config.mjs`:
-
-```javascript
-import 'dotenv/config'
-import { defineConfig, env } from 'prisma/config'
-
-export default defineConfig({
-  schema: 'prisma/schema.prisma',
-  migrations: { path: 'prisma/migrations' },
-  datasource: {
-    url: env('DATABASE_URL'),
-    // Uncomment to use direct connection for migrations only:
-    // directUrl: env('DIRECT_URL'),
-  },
-})
-```
-
-### Step 6: Define Your Database Schema
-
-Edit `prisma/schema.prisma`:
-
-```prisma
-generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
-}
-
-datasource db {
-  provider = "postgresql"
-}
-
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-}
-```
-
-**Key points:**
-- `output = "../src/generated/prisma"` - Generates client in custom location
-- `@id` - Primary key
-- `@unique` - Unique constraint (email can't duplicate)
-- `@default(cuid())` - Auto-generate unique ID
-- `DateTime @default(now())` - Auto-set current timestamp
-
-### Step 7: Create Prisma Singleton
-
-Create `lib/prisma.js`:
-
-```javascript
-// lib/prisma.js
-import { PrismaClient } from '../src/generated/prisma/client.ts'
-import { PrismaNeon } from '@prisma/adapter-neon'
-import { neonConfig } from '@neondatabase/serverless'
-import ws from 'ws'
-
-// Enable WebSocket for serverless environments
-neonConfig.webSocketConstructor = ws
-
-// Create Neon adapter
-const connectionString = process.env.DATABASE_URL
-const adapter = new PrismaNeon({ connectionString })
-
-// Factory function to create new client
-const createClient = () => new PrismaClient({ adapter })
-
-// --- SINGLETON PATTERN: Prevent connection exhaustion ---
-// Why? Next.js hot-reloads modules during development, which would create
-// multiple PrismaClient instances. Each instance opens DB connections.
-// Too many connections = "FATAL: too many connections" error.
-// Solution: Reuse single global instance in development.
-
-let prisma
-
-if (process.env.NODE_ENV === 'development') {
-  // Persist across hot reloads using globalThis
-  if (!globalThis.__prisma) {
-    globalThis.__prisma = createClient()
-  }
-  prisma = globalThis.__prisma
-} else {
-  // In production, create fresh instance
-  prisma = createClient()
-}
-
-export default prisma
-```
-
-**Critical notes:**
-- ✅ `adapter: new PrismaNeon()` - Required for Prisma v7 with serverless
-- ✅ `neonConfig.webSocketConstructor = ws` - Required for Node.js environments
-- ✅ Singleton pattern prevents connection exhaustion
-
-### Step 8: Generate Prisma Client
+Run migrations to integrate your schema into the database and build the Prisma client.
 
 ```bash
 npx prisma generate
+npx prisma db push
 ```
 
-Output: `src/generated/prisma/client.ts`
-
-### Step 9: Create Database & Run Migrations
-
-```bash
-# Create tables in database
-npx prisma migrate dev --name init
-```
-
-This will:
-1. Create the migration file
-2. Apply it to your Neon database
-3. Regenerate Prisma client
-
-### Step 10: Create API Route
-
-Create `app/api/users/route.js`:
-
-```javascript
-// app/api/users/route.js
-import prisma from '../../../lib/prisma'
-
-// GET: Fetch all users
-export async function GET() {
-  const users = await prisma.user.findMany()
-  return new Response(JSON.stringify(users), {
-    status: 200,
-    headers: { 'content-type': 'application/json' },
-  })
-}
-
-// POST: Create a new user
-export async function POST(req) {
-  const body = await req.json()
-
-  // Validate email is provided
-  if (!body.email) {
-    return new Response(
-      JSON.stringify({ error: 'email required' }),
-      { status: 400, headers: { 'content-type': 'application/json' } }
-    )
-  }
-
-  // Create user in database
-  const user = await prisma.user.create({
-    data: {
-      email: body.email,
-      name: body.name || null,
-    },
-  })
-
-  return new Response(JSON.stringify(user), {
-    status: 201,
-    headers: { 'content-type': 'application/json' },
-  })
-}
-```
-
----
-
-## 📁 Project Structure
-
-```
-neon-prisma/
-├── app/
-│   ├── api/
-│   │   └── users/
-│   │       └── route.js              # 👈 API endpoints
-│   ├── globals.css
-│   ├── layout.js
-│   └── page.js
-│
-├── lib/
-│   └── prisma.js                     # 👈 Singleton client
-│
-├── prisma/
-│   ├── schema.prisma                 # 👈 Database schema
-│   └── migrations/                   # Auto-generated migrations
-│
-├── src/
-│   └── generated/
-│       └── prisma/                   # 👈 Generated Prisma client
-│           ├── client.ts
-│           ├── models.ts
-│           ├── index.ts
-│           └── ...
-│
-├── .env.local                        # 👈 Database URL (git-ignored)
-├── prisma.config.mjs                 # 👈 Prisma configuration
-├── next.config.mjs                   # Next.js configuration
-├── package.json                      # Dependencies & scripts
-└── README.md                         # This file
-```
-
----
-
-## 🔑 Key Files Explained
-
-### `prisma/schema.prisma`
-Defines your entire database structure. Prisma uses this as the source of truth.
-
-```prisma
-generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"  # Custom output location
-}
-
-datasource db {
-  provider = "postgresql"
-}
-
-model User {
-  id        String   @id @default(cuid())  # Auto-generate ID
-  email     String   @unique                # Can't have duplicates
-  name      String?                         # Optional field (nullable)
-  createdAt DateTime @default(now())       # Auto-set timestamp
-}
-```
-
-### `lib/prisma.js`
-**Most critical file!** Exports a singleton Prisma client.
-
-- **Why singleton?** Prevents connection pool exhaustion during Next.js hot reload
-- **Why adapter?** Neon adapter handles serverless connection pooling
-- **Why WebSocket?** Required for Node.js serverless environments
-
-### `app/api/users/route.js`
-Next.js API route. Handles HTTP requests.
-
-```javascript
-// Import the singleton (same instance everywhere)
-import prisma from '../../../lib/prisma'
-
-// HTTP GET handler
-export async function GET() {
-  const users = await prisma.user.findMany()
-  return new Response(JSON.stringify(users), { status: 200 })
-}
-
-// HTTP POST handler
-export async function POST(req) {
-  const body = await req.json()
-  const user = await prisma.user.create({ data: body })
-  return new Response(JSON.stringify(user), { status: 201 })
-}
-```
-
-### `.env.local`
-Store sensitive credentials. **Never commit to git.**
-
-```bash
-# Pooled connection (recommended for production/serverless)
-DATABASE_URL="postgresql://..."
-
-# Optional: Direct connection for migrations
-DIRECT_URL="postgresql://..."
-```
-
----
-
-## 🔄 Database Operations
-
-### Common Prisma Queries
-
-```javascript
-import prisma from '@/lib/prisma'
-
-// READ: Get all users
-const users = await prisma.user.findMany()
-
-// READ: Get one user
-const user = await prisma.user.findUnique({
-  where: { email: 'john@example.com' }
-})
-
-// CREATE: Add new user
-const newUser = await prisma.user.create({
-  data: {
-    email: 'jane@example.com',
-    name: 'Jane Doe'
-  }
-})
-
-// UPDATE: Modify user
-const updated = await prisma.user.update({
-  where: { id: 'user-id' },
-  data: { name: 'Updated Name' }
-})
-
-// DELETE: Remove user
-const deleted = await prisma.user.delete({
-  where: { id: 'user-id' }
-})
-```
-
-### Schema Changes Workflow
-
-When you update `schema.prisma`:
-
-```bash
-# 1. Create migration with descriptive name
-npx prisma migrate dev --name add_email_verified_field
-
-# 2. Prisma will:
-#    - Detect schema changes
-#    - Generate migration file
-#    - Apply to database
-#    - Regenerate client
-
-# 3. Test your app
-npm run dev
-```
-
-### Reset Development Database
-
-If database gets corrupted or out of sync:
-
-```bash
-# WARNING: This deletes all data in dev database!
-npx prisma migrate reset
-```
-
----
-
-## 🧪 Testing the API
-
-### Start the Development Server
+### 5. Run the Development Server
 
 ```bash
 npm run dev
+# or
+yarn dev
 ```
 
-Server runs at `http://localhost:3000`
-
-### Test GET Request
-
-```bash
-curl http://localhost:3000/api/users
-```
-
-**Response:**
-```json
-[]  // Empty array if no users yet
-```
-
-### Test POST Request
-
-```bash
-curl -X POST http://localhost:3000/api/users \
-  -H "Content-Type: application/json" \
-  -d '{"email": "test@example.com", "name": "Test User"}'
-```
-
-**Response:**
-```json
-{
-  "id": "clk1abc2def3ghi4jkl5m6n7o",
-  "email": "test@example.com",
-  "name": "Test User",
-  "createdAt": "2024-01-17T10:30:00.000Z"
-}
-```
-
-### Using Prisma Studio
-
-Visualize and edit database data:
-
-```bash
-npx prisma studio
-```
-
-Opens browser at `http://localhost:5555`
+The application will be running at [http://localhost:3000](http://localhost:3000).
 
 ---
 
-## 🌱 Optional: Seed Your Database
+## 🎨 UI/UX Philosophy
 
-Create `prisma/seed.js`:
-
-```javascript
-import prisma from '../lib/prisma.js'
-
-async function main() {
-  console.log('🌱 Seeding database...')
-
-  const user = await prisma.user.create({
-    data: {
-      email: 'seed@example.com',
-      name: 'Seed User'
-    }
-  })
-
-  console.log(`✅ Created user: ${user.email}`)
-}
-
-main()
-  .catch(console.error)
-  .finally(() => prisma.$disconnect())
-```
-
-Add to `package.json`:
-
-```json
-{
-  "scripts": {
-    "seed": "node prisma/seed.js"
-  }
-}
-```
-
-Run:
-
-```bash
-npm run seed
-```
+The interface is driven by highly responsive styling mapped closely to Tailwind CSS `v4` and augmented with customized class aggregators (`clsx`, `tailwind-merge`). The design principles embrace wide paddings, soft dropshadows (`ui/card` layouts), clear typography, and subtle interactive animations to manifest an overarching **Modern & Sleek** identity.
 
 ---
 
-## 🚀 Deployment
+## 🛡️ License
 
-### Deploy to Vercel
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-1. **Push to GitHub:**
-```bash
-git add .
-git commit -m "Initial setup"
-git push
-```
-
-2. **Connect to Vercel:**
-   - Go to [vercel.com](https://vercel.com)
-   - Import your GitHub repo
-   - Add environment variable: `DATABASE_URL` (from Neon)
-
-3. **Deploy:**
-```bash
-# Vercel auto-deploys on push
-```
-
-### Deploy to Other Platforms
-
-Works with:
-- **Heroku** - Set `DATABASE_URL` in config vars
-- **Railway** - Connect Neon database, set env vars
-- **Fly.io** - Add secrets via Fly CLI
-- **AWS Lambda** - Use with API Gateway
-
-**Key requirement:** Set `DATABASE_URL` environment variable pointing to your Neon database.
-
----
-
-## ❌ Troubleshooting
-
-### Error: "Module not found: Can't resolve '../../lib/prisma'"
-
-**Cause:** Wrong import path from API route
-
-**Fix:** Import path must have correct number of `../` based on file location:
-
-```
-API Route: app/api/users/route.js
-Prisma:   lib/prisma.js
-
-Path: ../../../lib/prisma  ✅ (3 levels up)
-```
-
----
-
-### Error: "FATAL: too many connections"
-
-**Cause:** Multiple PrismaClient instances created
-
-**Fix:** Ensure singleton pattern in `lib/prisma.js`:
-
-```javascript
-if (process.env.NODE_ENV === 'development') {
-  if (!globalThis.__prisma) {
-    globalThis.__prisma = createClient()
-  }
-  prisma = globalThis.__prisma
-}
-```
-
----
-
-### Error: "PrismaClient requires adapter or accelerateUrl"
-
-**Cause:** Prisma v7 needs adapter for serverless
-
-**Fix:** Ensure adapter is configured in `lib/prisma.js`:
-
-```javascript
-const adapter = new PrismaNeon({ connectionString })
-const createClient = () => new PrismaClient({ adapter })
-```
-
----
-
-### Error: "Could not find Generated client"
-
-**Cause:** Client not generated yet
-
-**Fix:**
-```bash
-npx prisma generate
-```
-
----
-
-### Error: "Cannot find module 'ws'"
-
-**Cause:** Missing WebSocket dependency
-
-**Fix:**
-```bash
-npm install ws
-npm install -D bufferutil  # Optional, prevents warnings
-```
-
----
-
-### Database Not Connecting
-
-1. **Verify connection string:**
-   ```bash
-   echo $DATABASE_URL  # Check it's set
-   ```
-
-2. **Test connection:**
-   ```bash
-   npx prisma db execute --stdin
-   SELECT 1;  # Type this, press Enter twice
-   ```
-
-3. **Check Neon dashboard:**
-   - Verify database is active
-   - Confirm IP whitelist (Neon allows all by default)
-   - Check credentials
-
----
-
-## 🎯 Common Patterns
-
-### Validation in API Routes
-
-```javascript
-export async function POST(req) {
-  const body = await req.json()
-
-  // Validate input
-  if (!body.email || typeof body.email !== 'string') {
-    return new Response(
-      JSON.stringify({ error: 'Invalid email' }),
-      { status: 400 }
-    )
-  }
-
-  // Check if already exists
-  const existing = await prisma.user.findUnique({
-    where: { email: body.email }
-  })
-
-  if (existing) {
-    return new Response(
-      JSON.stringify({ error: 'Email already registered' }),
-      { status: 409 }
-    )
-  }
-
-  // Create user
-  const user = await prisma.user.create({
-    data: { email: body.email }
-  })
-
-  return new Response(JSON.stringify(user), { status: 201 })
-}
-```
-
-### Error Handling
-
-```javascript
-export async function GET() {
-  try {
-    const users = await prisma.user.findMany()
-    return new Response(JSON.stringify(users), { status: 200 })
-  } catch (error) {
-    console.error('Database error:', error)
-    return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
-      { status: 500 }
-    )
-  }
-}
-```
-
-### Filtering & Sorting
-
-```javascript
-// Get only verified users, sorted by creation date
-const users = await prisma.user.findMany({
-  where: {
-    email: { endsWith: '@company.com' }
-  },
-  orderBy: { createdAt: 'desc' },
-  take: 10  // Limit to 10 results
-})
-```
-
----
-
-## 📚 Resources
-
-| Topic | Link |
-|-------|------|
-| Prisma Docs | [pris.ly/docs](https://pris.ly/docs) |
-| Neon Docs | [neon.tech/docs](https://neon.tech/docs) |
-| Next.js App Router | [nextjs.org/docs/app](https://nextjs.org/docs/app) |
-| Prisma Adapter Neon | [github.com/prisma/adapter-neon](https://github.com/prisma/adapter-neon) |
-
----
-
-## ✨ Quick Reference
-
-| Task | Command |
-|------|---------|
-| Start dev server | `npm run dev` |
-| Generate Prisma client | `npx prisma generate` |
-| Create migration | `npx prisma migrate dev --name <name>` |
-| Reset database | `npx prisma migrate reset` |
-| View data | `npx prisma studio` |
-| Build for production | `npm run build` |
-| Start production server | `npm start` |
-
----
-
-## 🎓 Learning Path
-
-1. **Understand the setup** - Read this README top to bottom
-2. **Modify the schema** - Add a new field to User model
-3. **Create new API routes** - Add POST/DELETE endpoints
-4. **Deploy** - Push to Vercel/Railway
-5. **Scale** - Add more models and relationships
-
----
-
-## 📝 License
-
-MIT - Use freely for personal and commercial projects.
-
----
-
-**Last Updated:** January 2025  
-**Prisma Version:** v7.2.0  
-**Next.js Version:** 16.1.3
+<div align="center">
+  <i>Built with ❤️ using Next.js & Neon.</i>
+</div>
